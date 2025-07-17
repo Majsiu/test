@@ -26,9 +26,10 @@ main {
   width: 100%;
 }
 
-.img {
+img {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   margin: 0 auto;
   height: auto;
@@ -36,6 +37,3 @@ main {
   max-width: 100%;
 }
 
-.img a {
-  margin: 20px 0; /* 20px góra/dół, 0 lewo/prawo */
-}
