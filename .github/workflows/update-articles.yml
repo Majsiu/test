@@ -1,5 +1,8 @@
 name: Update Articles List
 
+permissions:
+  contents: write
+
 on:
   push:
     paths:
