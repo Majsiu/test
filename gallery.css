@@ -53,7 +53,7 @@ img {
 
 @media (min-width: 768px) {
   img {
-    width: 50%;
+    width: 70%;
     max-width: 800px;
   }
 }
