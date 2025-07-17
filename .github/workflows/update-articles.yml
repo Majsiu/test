@@ -3,7 +3,7 @@ name: Update Articles List
 on:
   push:
     paths:
-      - 'articles/**'
+      - 'ex_art/**'
     
 jobs:
   update-articles:
