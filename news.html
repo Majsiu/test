@@ -75,43 +75,57 @@
     });
   </script>
 
-  <main>
-  <ul id="article-list" class="article-list">
-        <!-- Lista zostanie wypełniona przez JS -->
+  
+ <ul id="article-list" class="article-list">
+        <li class="loading">Ładowanie listy artykułów...</li>
     </ul>
     
     <div id="article-content">
-        <!-- Tu pojawi się treść artykułu -->
+        <p class="loading">Wybierz artykuł z listy powyżej</p>
     </div>
 
-    <!-- Ładujemy wygenerowaną listę artykułów -->
-    <script src="js/articles.js"></script>
-  </main>
+    <!-- Ładujemy automatycznie wygenerowaną listę artykułów -->
+    <script src="articles.js"></script>
+  
 
   <script>
-   // Ładujemy listę artykułów
-        const articleList = document.getElementById("article-list");
-        
-        articles.forEach(article => {
-            const li = document.createElement("li");
-            li.className = "article-item";
-            li.textContent = article.replace(".html", "");
-            li.onclick = () => loadArticle(article);
-            articleList.appendChild(li);
-        });
-
-        // Funkcja ładująca artykuł
-        async function loadArticle(filename) {
-            try {
-                const response = await fetch(`ex_art/${filename}`);
-                const content = await response.text();
-                document.getElementById("article-content").innerHTML = content;
-            } catch (error) {
-                document.getElementById("article-content").innerHTML = 
-                    "<p>Nie można załadować artykułu.</p>";
+        document.addEventListener('DOMContentLoaded', function() {
+            const articleList = document.getElementById('article-list');
+            const articleContent = document.getElementById('article-content');
+            
+            // Wyświetl listę artykułów
+            if (typeof articles !== 'undefined' && articles.length > 0) {
+                articleList.innerHTML = '';
+                
+                articles.forEach(article => {
+                    const dateParts = article.split('.');
+                    const formattedDate = `${dateParts[0]}.${dateParts[1]}.${dateParts[2]}`;
+                    
+                    const li = document.createElement('li');
+                    li.className = 'article-item';
+                    li.innerHTML = `<span class="article-date">${formattedDate}</span>`;
+                    li.addEventListener('click', () => loadArticle(article));
+                    articleList.appendChild(li);
+                });
+            } else {
+                articleList.innerHTML = '<li class="error">Brak dostępnych artykułów</li>';
             }
-        }  
-  </script>
+            
+            // Funkcja ładująca treść artykułu
+            async function loadArticle(filename) {
+                articleContent.innerHTML = '<p class="loading">Ładowanie artykułu...</p>';
+                
+                try {
+                    const response = await fetch(`ex_art/${filename}`);
+                    if (!response.ok) throw new Error('Nie znaleziono artykułu');
+                    const content = await response.text();
+                    articleContent.innerHTML = content;
+                } catch (error) {
+                    articleContent.innerHTML = `<p class="error">Błąd: ${error.message}</p>`;
+                }
+            }
+        });
+    </script>
 
   <footer>
     <div class="footer-content">
