@@ -76,11 +76,24 @@
   </script>
 
   <main>
-  <div id="articles-list">Ładowanie listy artykułów...</div>
+    <section class="onas">
+      <h1>Aktualności</h1>
+
+      <div class="newt">
+      <h2><i><u>artykuły</u></i></h2>
+      </div>
+
+      <div class="news">
+      <div id="articles-list">
+        Ładowanie listy artykułów...
+      </div>
+      </div>
+
+    </section>
   </main>
 
   <script>
-  fetch('articles.json')  // Ustaw poprawną ścieżkę do JSON-a
+  fetch('sciezka/do/articles.json')  // Ustaw poprawną ścieżkę do JSON-a
             .then(response => response.json())
             .then(files => {
                 const container = document.getElementById('articles-list');
@@ -98,7 +111,7 @@
 
                     // Tworzenie linku
                     const link = document.createElement('a');
-                    link.href = `ex_art/${file}`; // Ścieżka do folderu z plikami
+                    link.href = `sciezka/do/folderu/${file}`; // Ścieżka do folderu z plikami
                     link.textContent = `Artykuł z dnia ${polishDate}`;
                     link.style.display = 'block';
                     link.style.margin = '10px 0';
