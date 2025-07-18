@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <!-- Ikonka strony -->
+	<link rel="apple-touch-icon" sizes="180x180" href="images/fav/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/fav/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/fav/favicon-16x16.png">
+	<link rel="manifest" href="images/fav/site.webmanifest">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HMI</title>
+  <link rel="stylesheet" href="main.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  
+    <nav class="navbar">
+    <div class="container">
+      <!-- Logo -->
+      <div class="logo">
+        <img src="images/hmilogo.webp" alt="Logo" />
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="menu desktop-menu">
+        <a href="index.html">Strona główna</a>
+        <a href="users.html">Członkowie</a>
+        <a href="news.html">Aktualności</a>
+        <a href="achievements.html">Osiągnięcia</a>
+        <a href="media.html">Social Media</a>
+        <a href="kontakt.html">Kontakt</a>
+        <a href="en.html"><img src="https://flagcdn.com/w40/gb.png" alt="UK flag" class="flaga"></a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="menu-btn" class="menu-btn">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Overlay Menu -->
+    <div id="mobile-menu" class="mobile-overlay">
+      <button id="close-btn" class="close-btn">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      <a href="index.html">Strona główna</a>
+        <a href="users.html">Członkowie</a>
+        <a href="news.html">Aktualności</a>
+        <a href="achievements.html">Osiągnięcia</a>
+        <a href="media.html">Social Media</a>
+        <a href="kontakt.html">Kontakt</a>
+        <a href="en.html"><img src="https://flagcdn.com/w40/gb.png" alt="UK flag" class="flaga"></a>
+    </div>
+  </nav>
+
+  <script>
+    const menuBtn = document.getElementById("menu-btn");
+    const closeBtn = document.getElementById("close-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    menuBtn.addEventListener("click", () => {
+      mobileMenu.classList.add("active");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      mobileMenu.classList.remove("active");
+    });
+  </script>
+
+  <main>
+  <ul id="article-list" class="article-list">
+        <!-- Lista zostanie wypełniona przez JS -->
+    </ul>
+    
+    <div id="article-content">
+        <!-- Tu pojawi się treść artykułu -->
+    </div>
+
+    <!-- Ładujemy wygenerowaną listę artykułów -->
+    <script src="js/articles.js"></script>
+  </main>
+
+  <script>
+   // Ładujemy listę artykułów
+        const articleList = document.getElementById("article-list");
+        
+        articles.forEach(article => {
+            const li = document.createElement("li");
+            li.className = "article-item";
+            li.textContent = article.replace(".html", "");
+            li.onclick = () => loadArticle(article);
+            articleList.appendChild(li);
+        });
+
+        // Funkcja ładująca artykuł
+        async function loadArticle(filename) {
+            try {
+                const response = await fetch(`ex_art/${filename}`);
+                const content = await response.text();
+                document.getElementById("article-content").innerHTML = content;
+            } catch (error) {
+                document.getElementById("article-content").innerHTML = 
+                    "<p>Nie można załadować artykułu.</p>";
+            }
+        }  
+  </script>
+
+  <footer>
+    <div class="footer-content">
+      <div>Email: hmikolo.umg@gmail.com<br><a href="mailto:hmikolo.umg@gmail.com">Napisz tutaj</a></div>
+      <div>O nas<br><a href="index.html">Kliknij tutaj</a></div>
+      <div>Kontakt<br><a href="kontakt.html">Kliknij tutaj</a></div>
+    </div>
+  </footer>
+
+</body>
+</html>

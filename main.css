@@ -405,3 +405,22 @@ footer {
   padding: 6px; /* Większy odstęp */
   border-radius: 6px; /* Bardziej zaokrąglone rogi */
 }
+
+.article-list { 
+list-style: none; padding: 0; 
+}
+
+.article-item { 
+  padding: 10px; 
+  margin: 5px 0; 
+  background: #f0f0f0; 
+  cursor: pointer; 
+}
+
+.article-item:hover { 
+  background: #e0e0e0;
+}
+
+#article-content { 
+  margin-top: 20px; padding: 15px; border: 1px solid #ddd; 
+}
