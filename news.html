@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <!-- Ikonka strony -->
+	<link rel="apple-touch-icon" sizes="180x180" href="images/fav/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="images/fav/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="images/fav/favicon-16x16.png">
+	<link rel="manifest" href="images/fav/site.webmanifest">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HMI</title>
+  <link rel="stylesheet" href="main.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  
+    <nav class="navbar">
+    <div class="container">
+      <!-- Logo -->
+      <div class="logo">
+        <img src="images/hmilogo.webp" alt="Logo" />
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="menu desktop-menu">
+        <a href="index.html">Strona główna</a>
+        <a href="users.html">Członkowie</a>
+        <a href="news.html">Aktualności</a>
+        <a href="achievements.html">Osiągnięcia</a>
+        <a href="media.html">Social Media</a>
+        <a href="kontakt.html">Kontakt</a>
+        <a href="en.html"><img src="https://flagcdn.com/w40/gb.png" alt="UK flag" class="flaga"></a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="menu-btn" class="menu-btn">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Overlay Menu -->
+    <div id="mobile-menu" class="mobile-overlay">
+      <button id="close-btn" class="close-btn">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      <a href="index.html">Strona główna</a>
+        <a href="users.html">Członkowie</a>
+        <a href="news.html">Aktualności</a>
+        <a href="achievements.html">Osiągnięcia</a>
+        <a href="media.html">Social Media</a>
+        <a href="kontakt.html">Kontakt</a>
+        <a href="en.html"><img src="https://flagcdn.com/w40/gb.png" alt="UK flag" class="flaga"></a>
+    </div>
+  </nav>
+
+  <script>
+    const menuBtn = document.getElementById("menu-btn");
+    const closeBtn = document.getElementById("close-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+
+    menuBtn.addEventListener("click", () => {
+      mobileMenu.classList.add("active");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      mobileMenu.classList.remove("active");
+    });
+  </script>
+
+  <main>
+  <div id="articles-container">
+    <div id="loading">Ładowanie artykułów...</div>
+  </div>
+  </main>
+
+  <script>
+     async function loadArticles() {
+      try {
+        // Pobierz zawartość folderu ex_art
+        const response = await fetch('ex_art/');
+        const html = await response.text();
+        
+        // Parsuj listę plików
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Znajdź wszystkie linki do plików HTML
+        const links = Array.from(doc.querySelectorAll('a[href$=".html"]'))
+          .map(a => a.getAttribute('href'))
+          .filter(file => {
+            // Filtruj tylko pliki w formacie dd.mm.yyyy.html
+            return file.match(/^\d{2}\.\d{2}\.\d{4}\.html$/);
+          });
+        
+        // Sortuj od najnowszego do najstarszego
+        links.sort((a, b) => {
+          const [aDay, aMonth, aYear] = a.split('.').map(Number);
+          const [bDay, bMonth, bYear] = b.split('.').map(Number);
+          return new Date(bYear, bMonth - 1, bDay) - new Date(aYear, aMonth - 1, aDay);
+        });
+        
+        const container = document.getElementById('articles-container');
+        container.innerHTML = ''; // Wyczyść komunikat ładowania
+        
+        // Załaduj i wyświetl każdy artykuł
+        for (const file of links) {
+          const [day, month, year] = file.split('.');
+          const date = new Date(year, month - 1, day);
+          
+          // Pobierz treść artykułu
+          const articleResponse = await fetch(`ex_art/${file}`);
+          const articleContent = await articleResponse.text();
+          
+          // Utwórz element artykułu
+          const articleElement = document.createElement('div');
+          articleElement.className = 'article';
+          articleElement.innerHTML = `
+            <div class="date">${date.toLocaleDateString('pl-PL', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              weekday: 'long'
+            })}</div>
+            ${articleContent}
+          `;
+          
+          container.appendChild(articleElement);
+        }
+        
+      } catch (error) {
+        console.error('Błąd ładowania artykułów:', error);
+        document.getElementById('articles-container').innerHTML = 
+          '<p class="error">Nie udało się załadować artykułów. Spróbuj odświeżyć stronę.</p>';
+      }
+    }
+
+    // Uruchom po załadowaniu strony
+    document.addEventListener('DOMContentLoaded', loadArticles);   
+  </script>
+
+  <footer>
+    <div class="footer-content">
+      <div>Email: hmikolo.umg@gmail.com<br><a href="mailto:hmikolo.umg@gmail.com">Napisz tutaj</a></div>
+      <div>O nas<br><a href="index.html">Kliknij tutaj</a></div>
+      <div>Kontakt<br><a href="kontakt.html">Kliknij tutaj</a></div>
+    </div>
+  </footer>
+
+</body>
+</html>
