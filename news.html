@@ -75,57 +75,42 @@
     });
   </script>
 
-  
- <ul id="article-list" class="article-list">
-        <li class="loading">Ładowanie listy artykułów...</li>
-    </ul>
-    
-    <div id="article-content">
-        <p class="loading">Wybierz artykuł z listy powyżej</p>
-    </div>
-
-    <!-- Ładujemy automatycznie wygenerowaną listę artykułów -->
-    <script src="articles.js"></script>
-  
+  <main>
+  <div id="articles-list">Ładowanie listy artykułów...</div>
+  </main>
 
   <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const articleList = document.getElementById('article-list');
-            const articleContent = document.getElementById('article-content');
-            
-            // Wyświetl listę artykułów
-            if (typeof articles !== 'undefined' && articles.length > 0) {
-                articleList.innerHTML = '';
-                
-                articles.forEach(article => {
-                    const dateParts = article.split('.');
-                    const formattedDate = `${dateParts[0]}.${dateParts[1]}.${dateParts[2]}`;
-                    
-                    const li = document.createElement('li');
-                    li.className = 'article-item';
-                    li.innerHTML = `<span class="article-date">${formattedDate}</span>`;
-                    li.addEventListener('click', () => loadArticle(article));
-                    articleList.appendChild(li);
+  fetch('sciezka/do/articles.json')  // Ustaw poprawną ścieżkę do JSON-a
+            .then(response => response.json())
+            .then(files => {
+                const container = document.getElementById('articles-list');
+                container.innerHTML = ''; // Wyczyszczenie komunikatu "Ładowanie..."
+
+                files.forEach(file => {
+                    // Formatowanie nazwy pliku: "01.01.2023" -> "1 stycznia 2023"
+                    const [day, month, year] = file.split('.');
+                    const date = new Date(`${year}-${month}-${day}`);
+                    const polishDate = date.toLocaleDateString('pl-PL', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+
+                    // Tworzenie linku
+                    const link = document.createElement('a');
+                    link.href = `sciezka/do/folderu/${file}`; // Ścieżka do folderu z plikami
+                    link.textContent = `Artykuł z dnia ${polishDate}`;
+                    link.style.display = 'block';
+                    link.style.margin = '10px 0';
+
+                    container.appendChild(link);
                 });
-            } else {
-                articleList.innerHTML = '<li class="error">Brak dostępnych artykułów</li>';
-            }
-            
-            // Funkcja ładująca treść artykułu
-            async function loadArticle(filename) {
-                articleContent.innerHTML = '<p class="loading">Ładowanie artykułu...</p>';
-                
-                try {
-                    const response = await fetch(`ex_art/${filename}`);
-                    if (!response.ok) throw new Error('Nie znaleziono artykułu');
-                    const content = await response.text();
-                    articleContent.innerHTML = content;
-                } catch (error) {
-                    articleContent.innerHTML = `<p class="error">Błąd: ${error.message}</p>`;
-                }
-            }
-        });
-    </script>
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                document.getElementById('articles-list').innerHTML = 'Nie udało się załadować artykułów.';
+            });
+  </script>
 
   <footer>
     <div class="footer-content">
