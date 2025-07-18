@@ -93,36 +93,51 @@
   </main>
 
   <script>
-  fetch('articles.json')  // Ustaw poprawną ścieżkę do JSON-a
-            .then(response => response.json())
-            .then(files => {
-                const container = document.getElementById('articles-list');
-                container.innerHTML = ''; // Wyczyszczenie komunikatu "Ładowanie..."
+  fetch('articles.json')
+      .then(response => response.json())
+      .then(files => {
+          const container = document.getElementById('articles-list');
+          container.innerHTML = '';
 
-                files.forEach(file => {
-                    // Formatowanie nazwy pliku: "01.01.2023" -> "1 stycznia 2023"
-                    const [day, month, year] = file.split('.');
-                    const date = new Date(`${year}-${month}-${day}`);
-                    const polishDate = date.toLocaleDateString('pl-PL', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
+          // Tworzymy tablicę obiektów z datami i nazwami plików
+          const articles = files.map(file => {
+              // Usuwamy ewentualne rozszerzenie .html
+              const fileNameWithoutExt = file.replace('.html', '');
+              const [day, month, year] = fileNameWithoutExt.split('.');
+              
+              // Tworzymy obiekt Date (miesiące są od 0-11)
+              const date = new Date(year, month - 1, day);
+              
+              return {
+                  fileName: file,
+                  date: date
+              };
+          });
 
-                    // Tworzenie linku
-                    const link = document.createElement('a');
-                    link.href = `ex_art/${file}`; // Ścieżka do folderu z plikami
-                    link.textContent = `Artykuł z dnia ${polishDate}`;
-                    link.style.display = 'block';
-                    link.style.margin = '10px 0';
+          // Sortujemy artykuły od najnowszego do najstarszego
+          articles.sort((a, b) => b.date - a.date);
 
-                    container.appendChild(link);
-                });
-            })
-            .catch(error => {
-                console.error('Błąd:', error);
-                document.getElementById('articles-list').innerHTML = 'Nie udało się załadować artykułów.';
-            });
+          // Generujemy linki w posortowanej kolejności
+          articles.forEach(article => {
+              const polishDate = article.date.toLocaleDateString('pl-PL', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+              });
+
+              const link = document.createElement('a');
+              link.href = `ex_art/${article.fileName}`;
+              link.textContent = `Artykuł z dnia ${polishDate}`;
+              link.style.display = 'block';
+              link.style.margin = '10px 0';
+
+              container.appendChild(link);
+          });
+      })
+      .catch(error => {
+          console.error('Błąd:', error);
+          document.getElementById('articles-list').innerHTML = 'Nie udało się załadować artykułów.';
+      });
   </script>
 
   <footer>
