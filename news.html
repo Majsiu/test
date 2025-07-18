@@ -93,7 +93,7 @@
   </main>
 
   <script>
-  fetch('sciezka/do/articles.json')  // Ustaw poprawną ścieżkę do JSON-a
+  fetch('articles.json')  // Ustaw poprawną ścieżkę do JSON-a
             .then(response => response.json())
             .then(files => {
                 const container = document.getElementById('articles-list');
@@ -111,7 +111,7 @@
 
                     // Tworzenie linku
                     const link = document.createElement('a');
-                    link.href = `sciezka/do/folderu/${file}`; // Ścieżka do folderu z plikami
+                    link.href = `ex_art/${file}`; // Ścieżka do folderu z plikami
                     link.textContent = `Artykuł z dnia ${polishDate}`;
                     link.style.display = 'block';
                     link.style.margin = '10px 0';
